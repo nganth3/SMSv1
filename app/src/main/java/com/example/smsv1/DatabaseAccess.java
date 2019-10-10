@@ -65,7 +65,7 @@ public class DatabaseAccess {
     }
 
 
-    public void insertSMS(String Sender,String Khuvuc,String AmBao,String TextBao,String Time,String Status){
+    public void insertSMS(String Sender,int Khuvuc,String AmBao,String TextBao,String Time,int Status){
 
         ContentValues values= new ContentValues();
         values.put("Sender",Sender );
@@ -91,11 +91,16 @@ public class DatabaseAccess {
     public String getTinnhan(String sender){
         c=database.rawQuery("select AmBao from TinNhan where Sender ='" + sender +"'",new String[]{});
         Log.d("yeucau","DDDxxx");
+        int count = 0;
         StringBuffer stringBuffer = new StringBuffer();
         while (c.moveToNext()){
             String AmBao =c.getString( 0);
+            count = c.getCount();
+            
             stringBuffer.append("//"+AmBao);
         }
+
+        Log.d("yeucau","DDDxxx" + stringBuffer.toString() + count);
         return stringBuffer.toString();
     }
     public String getLoi(String maloi){

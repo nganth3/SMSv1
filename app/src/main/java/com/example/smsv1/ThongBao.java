@@ -21,6 +21,7 @@ public class ThongBao {
     private final String strPhone, strMessage;
     private String strAmBao, stSP, strTextBao;
     private int intKhuvuc =4;
+    private int Status =1;
     private static int count;
     private static boolean SpKing = false;
     final Context context = GlobalApplication.getAppContext();
@@ -45,9 +46,9 @@ public class ThongBao {
         Calendar calendar = getInstance();
         final String time = simpleDateFormat.format(calendar.getTime());
         databaseAccess.open();
-       // databaseAccess.insertSMS("bbbx","ccc","bbbx","ccc","'xxx'","ccc");
+    //   databaseAccess.insertSMS(strPhone,intKhuvuc,strAmBao,strTextBao,time,Status);
      //  databaseAccess.insertSMS();
-        String textambao = databaseAccess.getTinnhan("bbb");
+        String textambao = databaseAccess.getTinnhan("CSKHVIETTEL");
 
 
         Log.d("getambao",""+textambao);
