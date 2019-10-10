@@ -12,42 +12,92 @@ import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.speech.tts.TextToSpeech;
 import android.util.Log;
+import android.view.View;
+import android.view.WindowManager;
+import android.widget.Button;
 import android.widget.TextView;
 
 import java.util.Locale;
 
 public class ThongBaoActivity extends Activity {
 
-    String strThongBao;
+    static int count;
+    String strThongBao, strSender;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+//        getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON|
+//                WindowManager.LayoutParams.FLAG_DISMISS_KEYGUARD|
+//                WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED|
+//                WindowManager.LayoutParams.FLAG_TURN_SCREEN_ON);
+        getWindow().addFlags(                WindowManager.LayoutParams.FLAG_DISMISS_KEYGUARD|
+                WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED|
+                WindowManager.LayoutParams.FLAG_TURN_SCREEN_ON);
+
         super.onCreate(savedInstanceState);
+        count+=1;
         setContentView(R.layout.activity_thong_bao);
-        Log.d("STTT","onCreate");
-        final TextView textView = (TextView)findViewById(R.id.textViewthongbao);
+        Log.d("STTT","onCreate" + count);
+        final TextView textView_TieuDe = (TextView)findViewById(R.id.textView_TieuDe);
+        TextView textView_ThongBao = findViewById(R.id.textView_ThongBao);
+        Button btnBack = (Button)findViewById(R.id.btnBack);
+
+
+
         Intent intent = getIntent();
-        String strSender = intent.getStringExtra("SENDER");
+
+        strSender = intent.getStringExtra("SENDER") + " SL man hinh " + count;
         strThongBao = intent.getStringExtra("THONGBAO");
-
-        textView.setText(strSender + "\n" + strThongBao);
-
-
-
+        textView_TieuDe.setText(strSender);
+      //  textView_ThongBao.setText(strThongBao);
+        textView_ThongBao.append(strThongBao);
 
 
-
-        CountDownTimer countDownTimer = new CountDownTimer(20000,1000) {
+        btnBack.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onTick(long millisUntilFinished) {
-            }
-            @Override
-            public void onFinish() {
-                finish();
-            }
+            public void onClick(View v) {
 
-        }.start();
+            finish();
+            }
+        });
+
+
+//        CountDownTimer countDownTimer = new CountDownTimer(15000,1000) {
+//            @Override
+//            public void onTick(long millisUntilFinished) {
+//
+//            }
+//            @Override
+//            public void onFinish() {
+//               // WindowManager.LayoutParams
+//             // finish();
+//            }
+//
+//        }.start();
+    }
+
+    @Override
+    protected void onStop() {
+        Log.d("STTT","onStop" + count);
+        super.onStop();
+    }
+
+    @Override
+    protected void onPause() {
+        Log.d("STTT","onPause" + count );
+        super.onPause();
 
     }
 
+    @Override
+    protected void onRestart() {
+        Log.d("STTT","onRestart" + count );
+        super.onRestart();
+    }
 
+    @Override
+    protected void onDestroy() {
+        Log.d("STTT","onDestroy" + count );
+        count-= 1;
+        super.onDestroy();
+    }
 }

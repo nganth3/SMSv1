@@ -29,6 +29,8 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         wstThongBao = (Switch) findViewById(R.id.swtThongbao);
+
+
         sharedPreferences = getSharedPreferences("SHARED_PREFERENCES_SETUP", Context.MODE_PRIVATE);
         blnThongBao=sharedPreferences.getBoolean("ThongBao",false);
 

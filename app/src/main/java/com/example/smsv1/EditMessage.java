@@ -1,9 +1,12 @@
 package com.example.smsv1;
 
+import android.content.Context;
+import android.util.Log;
+
 public class EditMessage {
 
     private static String strPhone, strMessage, strAmBao, strTextBao;
-
+    static final Context context = GlobalApplication.getAppContext();
 
     public EditMessage(String strPhone, String strMessage) {
         this.strPhone = strPhone;
@@ -27,6 +30,17 @@ public class EditMessage {
     }
 
     public static String getStrAmBao() {
+        DatabaseAccess databaseAccess =DatabaseAccess.getInstance(context);
+        databaseAccess.open();
+        String tentinh = databaseAccess.getTentinh("HNI");
+
+        if(tentinh.isEmpty()){
+            Log.d("TTTT","XXX");
+        }else{
+            Log.d("TTTT",tentinh);
+        }
+        databaseAccess.close();
+
         switch (strPhone){
             case "171":
                 strAmBao ="co spm";
@@ -37,6 +51,8 @@ public class EditMessage {
             default:
                 strAmBao ="Co tin nhan";
         }
+
+
         return strAmBao;
     }
 
