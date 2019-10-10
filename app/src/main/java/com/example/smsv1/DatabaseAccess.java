@@ -93,8 +93,8 @@ public class DatabaseAccess {
         Log.d("yeucau","DDDxxx");
         StringBuffer stringBuffer = new StringBuffer();
         while (c.moveToNext()){
-            String AmBao =c.getString(0);
-            stringBuffer.append(""+AmBao);
+            String AmBao =c.getString( 0);
+            stringBuffer.append("//"+AmBao);
         }
         return stringBuffer.toString();
     }
