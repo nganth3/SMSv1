@@ -44,10 +44,6 @@ public class MyReceiver extends BroadcastReceiver {
 
         if (wstThongBao2) {
 
-
-//            PowerManager powerManager = (PowerManager) context.getSystemService(POWER_SERVICE);
-//            @SuppressLint("InvalidWakeLockTag") PowerManager.WakeLock wakeLock = powerManager.newWakeLock(PowerManager.ACQUIRE_CAUSES_WAKEUP | PowerManager.SCREEN_DIM_WAKE_LOCK, "bright");
-//            wakeLock.acquire(1000);
 //            //Un looc thiet bi
 //            KeyguardManager keyguardManager = (KeyguardManager) context.getSystemService(KEYGUARD_SERVICE);
 //            KeyguardManager.KeyguardLock keyguardLock = keyguardManager.newKeyguardLock("unLock");
@@ -88,7 +84,8 @@ public class MyReceiver extends BroadcastReceiver {
             }
             Log.d("UUUUU","XXx");
             ThongBao thongBao = new ThongBao(phoneNo, msg);
-            thongBao.ShowThongBao();
+           // thongBao.createNotificationChannels();
+           thongBao.ShowThongBao();
 
 
         }

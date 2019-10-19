@@ -1,27 +1,23 @@
 package com.example.smsv1;
 
-import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatActivity;
-
 import android.app.Activity;
-import android.app.AlertDialog;
-import android.content.Context;
-import android.content.DialogInterface;
+import android.app.NotificationManager;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.CountDownTimer;
-import android.speech.tts.TextToSpeech;
 import android.util.Log;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.TextView;
 
-import java.util.Locale;
+import static com.example.smsv1.GlobalApplication.CHANNEL_1_ID;
+import static com.example.smsv1.GlobalApplication.getAppContext;
 
 public class ThongBaoActivity extends Activity {
-
     static int count;
+    NotificationManager notificationManager;
+    CountDownTimer countDownTimer;
     String strThongBao, strSender;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -29,13 +25,12 @@ public class ThongBaoActivity extends Activity {
 //                WindowManager.LayoutParams.FLAG_DISMISS_KEYGUARD|
 //                WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED|
 //                WindowManager.LayoutParams.FLAG_TURN_SCREEN_ON);
-        getWindow().addFlags(                WindowManager.LayoutParams.FLAG_DISMISS_KEYGUARD|
+        getWindow().addFlags(WindowManager.LayoutParams.FLAG_DISMISS_KEYGUARD|
                 WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED|
                 WindowManager.LayoutParams.FLAG_TURN_SCREEN_ON);
-
         super.onCreate(savedInstanceState);
-        count+=1;
         setContentView(R.layout.activity_thong_bao);
+        count+=1;
         Log.d("STTT","onCreate" + count);
         final TextView textView_TieuDe = (TextView)findViewById(R.id.textView_TieuDe);
         TextView textView_ThongBao = findViewById(R.id.textView_ThongBao);
@@ -49,30 +44,22 @@ public class ThongBaoActivity extends Activity {
         strThongBao = intent.getStringExtra("THONGBAO");
         textView_TieuDe.setText(strSender);
       //  textView_ThongBao.setText(strThongBao);
-        textView_ThongBao.append(strThongBao);
-
+        textView_ThongBao.setText(strThongBao);
 
         btnBack.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
+    @Override
+         public void onClick(View v) {
+//        Intent intent=new Intent(ThongBaoActivity.this,MainActivity.class);
+//        count +=1;
+//        startActivity(intent);
+      finish();
+          }
+  });
 
-            finish();
-            }
-        });
 
 
-//        CountDownTimer countDownTimer = new CountDownTimer(15000,1000) {
-//            @Override
-//            public void onTick(long millisUntilFinished) {
-//
-//            }
-//            @Override
-//            public void onFinish() {
-//               // WindowManager.LayoutParams
-//             // finish();
-//            }
-//
-//        }.start();
+
+
     }
 
     @Override
@@ -82,8 +69,25 @@ public class ThongBaoActivity extends Activity {
     }
 
     @Override
+    protected void onResume() {
+        Log.d("STTT","onResume" + count);
+        super.onResume();
+    }
+
+    @Override
     protected void onPause() {
         Log.d("STTT","onPause" + count );
+        countDownTimer = new CountDownTimer(30000,1000) {
+            @Override
+            public void onTick(long millisUntilFinished) {
+
+            }
+            @Override
+            public void onFinish() {
+                finish();
+            }
+
+        }.start();
         super.onPause();
 
     }
@@ -97,7 +101,8 @@ public class ThongBaoActivity extends Activity {
     @Override
     protected void onDestroy() {
         Log.d("STTT","onDestroy" + count );
-        count-= 1;
+        //count-= 1;
         super.onDestroy();
     }
+
 }

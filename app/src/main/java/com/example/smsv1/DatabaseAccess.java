@@ -37,7 +37,6 @@ public class DatabaseAccess {
     public String getTentinh(String matinh){
 
         c=database.rawQuery("select TenTinh from MaTinh where MaTinh ='" + matinh +"'",new String[]{});
-        Log.d("yeucau","DDD");
         StringBuffer stringBuffer = new StringBuffer();
         while (c.moveToNext()){
             String tentinh =c.getString(0);
@@ -45,6 +44,19 @@ public class DatabaseAccess {
         }
         return stringBuffer.toString();
     }
+
+    public String getKhuVuc(String matinh){
+        c=database.rawQuery("select KhuVuc from MaTinh where MaTinh ='" + matinh +"'",new String[]{});
+        Log.d("yeucau","DDD");
+        StringBuffer stringBuffer = new StringBuffer();
+        while (c.moveToNext()){
+            String KhuVuc =c.getString(0);
+            stringBuffer.append(""+KhuVuc);
+        }
+        return stringBuffer.toString();
+    }
+
+
 
     public void insertMaTinh(){
 
@@ -69,15 +81,11 @@ public class DatabaseAccess {
 
         ContentValues values= new ContentValues();
         values.put("Sender",Sender );
-
         values.put("Status",Status);
         values.put("AmBao",AmBao);
         values.put("Time",Time);
         values.put("TextBao",TextBao);
         values.put("KhuVuc",Khuvuc );
-        values.put("Status",Status);
-
-
 
        long createSuccessful = database.insert("TinNhan", null,values);
 
@@ -89,16 +97,22 @@ public class DatabaseAccess {
 
     }
     public String getTinnhan(String sender){
-        c=database.rawQuery("select AmBao from TinNhan where Sender ='" + sender +"'",new String[]{});
+        c=database.rawQuery("select * from TinNhan where Sender ='" + sender +"'",new String[]{});
         Log.d("yeucau","DDDxxx");
         int count = 0;
         StringBuffer stringBuffer = new StringBuffer();
-        while (c.moveToNext()){
-            String AmBao =c.getString( 0);
-            count = c.getCount();
-            
-            stringBuffer.append("//"+AmBao);
-        }
+        count = c.getCount();
+
+            while (c.moveToNext()){
+                stringBuffer.append("\n");
+                for (int i=0; i<=5;i++){
+                String AmBao =c.getString(i);
+                stringBuffer.append("-"+AmBao);
+                }
+
+
+            }
+
 
         Log.d("yeucau","DDDxxx" + stringBuffer.toString() + count);
         return stringBuffer.toString();

@@ -33,7 +33,6 @@
 
     <TextView
         android:id="@+id/textView_ThongBao"
-
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
@@ -42,14 +41,19 @@
         android:layout_marginEnd="16dp"
         android:layout_marginRight="16dp"
         android:layout_weight="1"
+        android:fadeScrollbars="true"
+        android:scrollbarStyle="insideOverlay"
+        android:scrollbars="vertical"
         android:text="TextView"
         android:textColor="#FFFFFF"
         android:textSize="30dp"
         android:textStyle="bold"
+        app:layout_constraintBottom_toTopOf="@+id/btnBack"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintHorizontal_bias="1.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textView_TieuDe" />
+        app:layout_constraintTop_toBottomOf="@+id/textView_TieuDe"
+        app:layout_constraintVertical_bias="0.0" />
 
     <Button
         android:id="@+id/btnBack"

@@ -1,32 +1,38 @@
 package com.example.smsv1;
 
 import android.app.Activity;
-import android.app.Application;
+import android.app.Notification;
+
+import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
-import android.content.pm.ApplicationInfo;
-import android.icu.util.Calendar;
-import android.os.Build;
-import android.os.CountDownTimer;
+import android.content.SharedPreferences;
+import android.os.PowerManager;
 import android.speech.tts.TextToSpeech;
 import android.util.Log;
-import android.widget.Toast;
-import androidx.annotation.RequiresApi;
-import java.text.SimpleDateFormat;
-import java.util.Locale;
-import static android.icu.util.Calendar.getInstance;
+import android.widget.RemoteViews;
 
-@RequiresApi(api = Build.VERSION_CODES.N)
-public class ThongBao {
+import androidx.core.app.NotificationCompat;
+import androidx.core.app.NotificationManagerCompat;
+
+import java.sql.Time;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Locale;
+import static com.example.smsv1.GlobalApplication.CHANNEL_1_ID;
+
+
+public class ThongBao extends Activity {
+    SharedPreferences sharedPreferences;
+    private NotificationManagerCompat notificationManager;
     private final String strPhone, strMessage;
     private String strAmBao, stSP, strTextBao;
-    private int intKhuvuc =4;
-    private int Status =1;
+    private Time time;
+    private int intKhuvuc =4,Status =1;
+    final int fn=15000;
     private static int count;
-    private static boolean SpKing = false;
     final Context context = GlobalApplication.getAppContext();
     DatabaseAccess databaseAccess =DatabaseAccess.getInstance(context);
-    CountDownTimer countDownTimer;
 
     SimpleDateFormat simpleDateFormat = new SimpleDateFormat("HH:mm:ss");
     TextToSpeech textToSpeech;
@@ -34,83 +40,86 @@ public class ThongBao {
     public ThongBao(String strPhone, String strMessage) {
         this.strPhone = strPhone;
         this.strMessage = strMessage;
+        this.setStrAmBao();
+        this.setStrTextBao();
     }
-    final int fn=15000;
+
+
+
+
 
     public String getStrTextBao() {
         strTextBao=strMessage;
         return strTextBao;
     }
 
+   // @RequiresApi(api = Build.VERSION_CODES.N)
     public void ShowThongBao(){
-        Calendar calendar = getInstance();
-        final String time = simpleDateFormat.format(calendar.getTime());
-        databaseAccess.open();
-    //   databaseAccess.insertSMS(strPhone,intKhuvuc,strAmBao,strTextBao,time,Status);
-     //  databaseAccess.insertSMS();
-        String textambao = databaseAccess.getTinnhan("CSKHVIETTEL");
+        count+=1;
+        PowerManager powerManager = (PowerManager)context.getSystemService(POWER_SERVICE);
+        PowerManager.WakeLock wakeLock = powerManager.newWakeLock(PowerManager.ACQUIRE_CAUSES_WAKEUP | PowerManager.SCREEN_DIM_WAKE_LOCK, powerManager.toString());
+        wakeLock.acquire(20000);
+        sharedPreferences=context.getSharedPreferences("SHARED_PREFERENCES_SETUP", Context.MODE_PRIVATE);
+        speechThongBao();
+        if(sharedPreferences.getBoolean("Notify",true)){
+            createNotification();
+        }
+        if(sharedPreferences.getBoolean("Screen",true)){
+            createThongBao();
+        }
 
 
-        Log.d("getambao",""+textambao);
 
-        databaseAccess.close();
-
-
-        Show_ThongBao(time);
-        SpeedThongBao();
-        countDownTimer = new CountDownTimer(fn, 100) {
-            @Override
-            public void onTick(long millisUntilFinished) {
-                Log.d("CCCC", "" + textToSpeech.isSpeaking());
-
-            }
-
-            @Override
-            public void onFinish() {
-//                Show_ThongBao(time);
-//                SpeedThongBao();
-
-
-            }
-
-
-        }.start();
-
+   // wakeLock.release();
     }
 
-    private void SpeedThongBao(){
+    public void createNotification(){
+
+        notificationManager = NotificationManagerCompat.from(context);
+        Intent intent = new Intent(context, ThongBao.class);
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        PendingIntent pendingIntent = PendingIntent.getActivity(context, 0, intent, 0);
+
+        RemoteViews layoutnotify = new RemoteViews(context.getPackageName(),R.layout.layout_notify);
+        layoutnotify.setTextViewText(R.id.textView_tittle,strPhone);
+        layoutnotify.setTextViewText(R.id.textView_meseage,strMessage);
+
+        Notification notificationCompat = new NotificationCompat.Builder(context,  CHANNEL_1_ID)
+                .setSmallIcon(R.drawable.ic_launcher_background)
+                .setContentTitle(strPhone)
+                .setCustomContentView(layoutnotify)
+                .setTimeoutAfter(40000)
+              .build();
+        notificationManager.notify(count,notificationCompat );
+
+    }
+    private void speechThongBao(){
         textToSpeech = new TextToSpeech(context, new TextToSpeech.OnInitListener() {
             @Override
             public void onInit(int status) {
                 if (status!= TextToSpeech.ERROR){
                     textToSpeech.setLanguage(Locale.getDefault());
                     textToSpeech.speak(strAmBao,TextToSpeech.QUEUE_ADD,null);
-                    Toast.makeText(context , strAmBao + "\n" +getStrTextBao() , Toast.LENGTH_LONG).show();
-
-                }
-
-
-            }
+                 //   Toast.makeText(context , strAmBao + "\n" +getStrTextBao() , Toast.LENGTH_LONG).show();
+                }           }
 
 
         });
 
     }
-    private void Show_ThongBao(String time){
+    private void createThongBao(){
 
         Intent intent=new Intent(context,ThongBaoActivity.class);
         count +=1;
         Log.d("XXXXX",""+count);
-        intent.putExtra("SENDER","STB: " + strPhone + "   " + time + " SLTB " + count );
-        intent.putExtra("THONGBAO",getStrAmBao() +"\n" + getStrTextBao());
-       intent.setFlags(Intent.FLAG_ACTIVITY_MULTIPLE_TASK|Intent.FLAG_ACTIVITY_NEW_TASK);
-       // intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK|Intent.FLAG_ACTIVITY_CLEAR_TASK);
+       intent.putExtra("SENDER","STB: " + strPhone + "   " + time + " SLTB " + count );
+        intent.putExtra("THONGBAO",strAmBao +"\n" + getStrTextBao());
+        intent.setFlags(Intent.FLAG_ACTIVITY_MULTIPLE_TASK|Intent.FLAG_ACTIVITY_NEW_TASK);
         context.startActivity(intent);
-
-
     }
-    public String getStrAmBao() {
 
+
+    private void setStrAmBao() {
         switch (strPhone){
             case "171":
                 strAmBao =am171();
@@ -121,11 +130,20 @@ public class ThongBao {
             case "198":
                 strAmBao="một chín tám";
                 break;
+            case "VOFFICE":
+                strAmBao="Có văn bản";
+                break;
             default:
                 strAmBao ="Có tin nhắn";
         }
-        return strAmBao;
     }
+    private void setStrTextBao(){
+        this.strTextBao = this.strMessage;
+    }
+    private void setIntKhuvuc(String intKhuvuc) {
+        this.intKhuvuc = Integer.parseInt(intKhuvuc);
+    }
+
     private String amCSKH(){
 
         String strTam, strTam2;
@@ -151,7 +169,6 @@ public class ThongBao {
 
     }
     private String getTenLoi(String maloi){
-
         databaseAccess.open();
         String tenLoi = databaseAccess.getLoi(maloi);
         if(tenLoi.isEmpty()){ tenLoi = "Lỗi Khác";
@@ -200,8 +217,15 @@ public class ThongBao {
 
         databaseAccess.open();
         String tentinh = databaseAccess.getTentinh(matinh);
+        String Khuvuc = databaseAccess.getKhuVuc(matinh);
+        if (Khuvuc!=null){
+            setIntKhuvuc(Khuvuc);
+        }
         databaseAccess.close();
+
         return tentinh+=" " ;
+
+
     }
     private String converNumtoStr(String Num){
         String strNum ="";
@@ -227,6 +251,7 @@ public class ThongBao {
 
         return strNum;
     }
+
 
 
 }
