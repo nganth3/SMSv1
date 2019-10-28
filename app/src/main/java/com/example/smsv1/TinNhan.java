@@ -1,32 +1,79 @@
 package com.example.smsv1;
 
-
 import android.content.Context;
+import android.icu.util.Calendar;
+import android.os.Build;
 import android.util.Log;
 
-public class EditMessage {
+import androidx.annotation.RequiresApi;
 
-    private static String strPhone, strMessage, strAmBao, strTextBao;
+import java.sql.Date;
+import java.sql.Time;
+import java.text.SimpleDateFormat;
+import java.util.Locale;
+
+public class TinNhan {
+    public void setStrPhone(String strPhone) {
+        this.strPhone = strPhone;
+    }
+
+    public void setStrMessage(String strMessage) {
+        this.strMessage = strMessage;
+    }
+
+    private String strPhone, strMessage;
+    private String strAmBao, strTextBao,strTime;
+    private int intKV =4,intSTT;
+    private static int count =0;
     final Context context = GlobalApplication.getAppContext();
     DatabaseAccess databaseAccess =DatabaseAccess.getInstance(context);
 
 
-
-    public EditMessage(String strPhone, String strMessage) {
+    public TinNhan(String strPhone, String strMessage) {
         this.strPhone = strPhone;
         this.strMessage = strMessage;
-        this.taoAmbao();
+        this.setStrAmBao();
+        this.setStrTextBao();
+        this.setStrTime();
+        this.count +=1;
+        this.intSTT = count;
     }
 
 
 
+    public String getStrPhone() {
+        return strPhone;
+    }
+    public String getStrMessage() {
+        return strMessage;
+    }
+    public String getStrAmBao() {
+        return strAmBao;
+    }
+    public String getStrTextBao() {
+        return strTextBao;
+    }
+
+    public int getIntKV() {
+        return intKV;
+    }
+    public int getIntSTT() {
+        return intSTT;
+    }
+
+
+    public int getCount() {
+        return count;
+    }
+
+
+    public String getStrTime() {
+        return strTime;
+    }
 
 
 
-
-
-
-    private void taoAmbao() {
+    private void setStrAmBao() {
         switch (strPhone){
             case "171":
                 strAmBao =am171();
@@ -37,13 +84,37 @@ public class EditMessage {
             case "198":
                 strAmBao="một chín tám";
                 break;
+            case "VOFFICE":
+                strAmBao="Có văn bản";
+                break;
             default:
                 strAmBao ="Có tin nhắn";
         }
     }
+    private void setStrTextBao(){
+        this.strTextBao = this.strAmBao;
+    }
+
+
+    public void setStrTime() {
+
+        if(Build.VERSION.SDK_INT > Build.VERSION_CODES.O){
+
+        SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/YYYY HH:MM:SS");
+        Calendar calendar = Calendar.getInstance();
+        SimpleDateFormat mdformat = new SimpleDateFormat("HH:mm:ss");
+        this.strTime =  mdformat.format(calendar.getTime());}
+        else {
+            Date date = new Date(System.currentTimeMillis());
+            SimpleDateFormat dateFormat = new SimpleDateFormat("HH:mm:ss",
+                    Locale.ENGLISH);
+            String var = dateFormat.format(date);
+            this.strTime = var;}
 
 
 
+
+    }
 
     private String amCSKH(){
 
@@ -70,7 +141,6 @@ public class EditMessage {
 
     }
     private String getTenLoi(String maloi){
-
         databaseAccess.open();
         String tenLoi = databaseAccess.getLoi(maloi);
         if(tenLoi.isEmpty()){ tenLoi = "Lỗi Khác";
@@ -97,7 +167,7 @@ public class EditMessage {
             String tinhTam="";
             arrTram = strTam2.split(",");
 
-            strTam += arrTram.length +" Trạm tại các Tỉnh: ";
+            strTam += arrTram.length +" Trạm tại: ";
             for(int i=0;i<arrTram.length;i++){
                 if(!tinhTam.contains(arrTram[i].substring(0,3))) {
                     tinhTam+=arrTram[i].substring(0,3).trim()+",";
@@ -116,11 +186,16 @@ public class EditMessage {
         return strTam ;
     }
     private String getTinh(String matinh){
-
         databaseAccess.open();
         String tentinh = databaseAccess.getTentinh(matinh);
+        String Khuvuc = databaseAccess.getKhuVuc(matinh);
+        if (Khuvuc!=null){
+            setintKV(Khuvuc);
+        }
         databaseAccess.close();
         return tentinh+=" " ;
+
+
     }
     private String converNumtoStr(String Num){
         String strNum ="";
@@ -146,6 +221,22 @@ public class EditMessage {
 
         return strNum;
     }
+    private void setintKV(String KV) {
+        Log.d("KKKKK",""+ intKV);
+        if(intKV<5) {
+            if (intKV < 4) {
+                if (intKV != Integer.parseInt(KV)) {
+                    this.intKV = 5;
+                }
+            } else {
+                this.intKV = Integer.parseInt(KV);
+            }
+            Log.d("KKKKKEEE", "" + intKV);
+        }
+
+    }
+
+
 
 
 }

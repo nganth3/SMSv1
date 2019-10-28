@@ -21,10 +21,6 @@ public class ThongBaoActivity extends Activity {
     String strThongBao, strSender;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-//        getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON|
-//                WindowManager.LayoutParams.FLAG_DISMISS_KEYGUARD|
-//                WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED|
-//                WindowManager.LayoutParams.FLAG_TURN_SCREEN_ON);
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_DISMISS_KEYGUARD|
                 WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED|
                 WindowManager.LayoutParams.FLAG_TURN_SCREEN_ON);
@@ -35,12 +31,8 @@ public class ThongBaoActivity extends Activity {
         final TextView textView_TieuDe = (TextView)findViewById(R.id.textView_TieuDe);
         TextView textView_ThongBao = findViewById(R.id.textView_ThongBao);
         Button btnBack = (Button)findViewById(R.id.btnBack);
-
-
-
         Intent intent = getIntent();
-
-        strSender = intent.getStringExtra("SENDER") + " SL man hinh " + count;
+        strSender = intent.getStringExtra("SENDER");
         strThongBao = intent.getStringExtra("THONGBAO");
         textView_TieuDe.setText(strSender);
       //  textView_ThongBao.setText(strThongBao);

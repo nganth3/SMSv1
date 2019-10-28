@@ -82,10 +82,8 @@ public class MyReceiver extends BroadcastReceiver {
 
 
             }
-            Log.d("UUUUU","XXx");
             ThongBao thongBao = new ThongBao(phoneNo, msg);
-           // thongBao.createNotificationChannels();
-           thongBao.ShowThongBao();
+            thongBao.ShowThongBao();
 
 
         }
